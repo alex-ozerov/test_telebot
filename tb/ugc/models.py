@@ -14,9 +14,7 @@ class Profile(models.Model):
     firstname = models.TextField(
         verbose_name='Имя пользователя'
     )
-    lastname = models.TextField(
-        verbose_name='Фамилия пользователя'
-    )
+
     created_at = models.DateTimeField(
         verbose_name='Время первого запуска',
         auto_now_add=True,
@@ -24,7 +22,7 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'Время создания:{self.created_at}, ID:{self.external_id}, Логин:{self.name}, ' \
-               f'Имя:{self.firstname}, Фамилия:{self.lastname}'
+               f'Имя:{self.firstname}'
 
     class Meta:
         verbose_name = 'Профиль'

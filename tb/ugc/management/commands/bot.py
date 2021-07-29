@@ -83,8 +83,7 @@ def do_echo(update: Update, context: CallbackContext):
         external_id=chat_id,
         defaults={
             'name': update.message.from_user.name,
-            'firstname': update.message.from_user.first_name,
-            'lastname': update.message.from_user.last_name,
+            'firstname': update.message.from_user.full_name
         }
     )
     Message(
