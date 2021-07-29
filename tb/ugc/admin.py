@@ -9,6 +9,7 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('created_at', 'external_id', 'name', 'firstname', 'lastname')
     form = ProfileForm
 
+
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('id', 'profile', 'text', 'created_at')
