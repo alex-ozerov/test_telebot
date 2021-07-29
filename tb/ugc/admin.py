@@ -1,12 +1,16 @@
 from django.contrib import admin
 from .forms import ProfileForm
-from .models import Profile
+from .models import Profile, Message
 # Register your models here.
 
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('created_at', 'user_id', 'username', 'firstname', 'lastname')
+    list_display = ('created_at', 'external_id', 'name', 'firstname', 'lastname')
     form = ProfileForm
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'profile', 'text', 'created_at')
 
 

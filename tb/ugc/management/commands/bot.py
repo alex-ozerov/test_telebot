@@ -7,7 +7,41 @@ from telegram.ext import Filters
 from telegram.ext import MessageHandler
 from telegram.ext import Updater
 from telegram.utils.request import Request
+from ugc.models import Profile
+from ugc.models import Message
+from telegram import KeyboardButton
+from telegram import ReplyKeyboardMarkup
+import requests
+from bs4 import BeautifulSoup
 
+
+def do_eth():
+    DOLLAR_ETH = 'https://myfin.by/crypto-rates/ethereum-usd'
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36'}
+    full_page = requests.get(DOLLAR_ETH, headers=headers)
+    soup = BeautifulSoup(full_page.content, 'html.parser')
+    convert = soup.findAll("div", {"class": "birzha_info_head_rates"})
+    print(convert[0].text)
+
+
+
+BUTTON_BTC = 'BTC'
+BUTTON_ETH = 'ETH'
+BUTTON_DOGE = 'DOGE'
+
+
+def get_base_reply_keyboard():
+    keyboard = [
+        [
+            KeyboardButton(BUTTON_BTC),
+            KeyboardButton(BUTTON_ETH),
+            KeyboardButton(BUTTON_DOGE),
+        ],
+    ]
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=True,
+    )
 
 
 def log_errors(f):
@@ -20,14 +54,34 @@ def log_errors(f):
             raise e
     return inner
 
+
 @log_errors
 def do_echo(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
     text = update.message.text
-
-    reply_text = "Ваш ID = {}\n\n{}".format(chat_id, text)
+    p, _ = Profile.objects.get_or_create(
+        external_id=chat_id,
+        defaults={
+            'name': update.message.from_user.name,
+            'firstname': update.message.from_user.first_name,
+            'lastname': update.message.from_user.last_name,
+        }
+    )
+    Message(
+        profile=p,
+        text=text,
+    ).save()
+    if text == BUTTON_ETH:
+        return bot.message(do_eth)
+    elif text == BUTTON_BTC:
+        return do_btc(update=update)
+    elif text == BUTTON_DOGE:
+        return do_doge(update=update)
+    else:
+        reply_text = "Ваш запрос = {}".format(text)
     update.message.reply_text(
         text=reply_text,
+        reply_markup=get_base_reply_keyboard(),
     )
 
 
@@ -42,7 +96,6 @@ class Command(BaseCommand):
         bot = Bot(
             request=request,
             token=settings.TOKEN,
-            base_url=settings.PROXY_URL,
         )
         print(bot.get_me())
 

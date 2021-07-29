@@ -7,13 +7,13 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = (
-            'user_id',
-            'username',
+            'external_id',
+            'name',
             'firstname',
             'lastname'
         )
         widgets = {
-            'username': forms.TextInput,
+            'name': forms.TextInput,
             'firstname': forms.TextInput,
             'lastname': forms.TextInput
         }
