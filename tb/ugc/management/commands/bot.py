@@ -17,12 +17,32 @@ from bs4 import BeautifulSoup
 
 def do_eth():
     DOLLAR_ETH = 'https://myfin.by/crypto-rates/ethereum-usd'
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36'}
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36'}
     full_page = requests.get(DOLLAR_ETH, headers=headers)
     soup = BeautifulSoup(full_page.content, 'html.parser')
     convert = soup.findAll("div", {"class": "birzha_info_head_rates"})
-    print(convert[0].text)
+    return f'Курс 1 ETH = {convert[0].text}'
 
+
+def do_btc():
+    DOLLAR_BTC = 'https://myfin.by/crypto-rates/bitcoin'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36'}
+    full_page = requests.get(DOLLAR_BTC, headers=headers)
+    soup = BeautifulSoup(full_page.content, 'html.parser')
+    convert = soup.findAll("div", {"class": "birzha_info_head_rates"})
+    return f'Курс 1 BTC = {convert[0].text}'
+
+
+def do_doge():
+    DOLLAR_DOGE = 'https://myfin.by/crypto-rates/dogecoin'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36'}
+    full_page = requests.get(DOLLAR_DOGE, headers=headers)
+    soup = BeautifulSoup(full_page.content, 'html.parser')
+    convert = soup.findAll("div", {"class": "birzha_info_head_rates"})
+    return f'Курс 1 DOGE = {convert[0].text}'
 
 
 BUTTON_BTC = 'BTC'
@@ -72,13 +92,13 @@ def do_echo(update: Update, context: CallbackContext):
         text=text,
     ).save()
     if text == BUTTON_ETH:
-        return bot.message(do_eth)
+        reply_text = do_eth()
     elif text == BUTTON_BTC:
-        return do_btc(update=update)
+        reply_text = do_btc()
     elif text == BUTTON_DOGE:
-        return do_doge(update=update)
+        reply_text = do_doge()
     else:
-        reply_text = "Ваш запрос = {}".format(text)
+        reply_text = "Попробуйте еще раз!"
     update.message.reply_text(
         text=reply_text,
         reply_markup=get_base_reply_keyboard(),
@@ -109,3 +129,5 @@ class Command(BaseCommand):
 
         updater.start_polling()
         updater.idle()
+
+
