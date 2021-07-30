@@ -1,2 +1,4 @@
 django
 python-telegram-bot
+requests
+bs4
